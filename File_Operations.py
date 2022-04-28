@@ -7,6 +7,8 @@ from flask_mysqldb import MySQL
 
 from werkzeug.utils import secure_filename
 
+import pygame
+
 UPLOAD_FOLDER = 'media/files'  # 'media/images'
 ALLOWED_EXTENSIONS = (['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
@@ -81,7 +83,7 @@ def row_id(id):
 def update_id(id):
     emaild = request.json["email"]
     cursor = mysql.connection.cursor()
-    cursor.execute('UPDATE Images set mail_id = %s where Id = %s', (emaild,id))
+    cursor.execute('UPDATE Images set mail_id = %s where Id = %s', (emaild, id))
     mysql.connection.commit()
     return "File Updated Successfully"
 
@@ -93,6 +95,25 @@ def delete_id(Id):
     cursor.execute("delete from Images where Id = %s", (Id,))
     mysql.connection.commit()
     return "File Deleted Successfully"
+
+
+# Single id
+@app.route("/display_image", methods=['GET'])
+def display_image():
+    pygame.init()
+    displayWidth = 800
+    displayHeight = 600
+    surface = pygame.display.set_mode((displayWidth, displayHeight))
+    pygame.display.set_caption('Image')
+    displayImage = pygame.image.load(r'D:\RESUMES\Raghu.jpg')
+    while True:
+        surface.fill((255, 255, 255))
+        surface.blit(displayImage, (0, 0))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            pygame.display.update()
 
 
 if __name__ == "__main__":
